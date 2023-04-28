@@ -1,0 +1,11 @@
+$ docker run -d --network some-network --name some-mongo \
+	-e MONGO_INITDB_ROOT_USERNAME=mongoadmin \
+	-e MONGO_INITDB_ROOT_PASSWORD=secret \
+	mongo
+
+
+
+    docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=secret -e MONGO_INITDB_DATABASE=my_db mongo
+
+
+    mongodb://mongoadmin:secret@34.16.134.140:27017/?retryWrites=true&w=majority

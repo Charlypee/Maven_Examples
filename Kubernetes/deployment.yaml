@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: front 
+  template:
+    metadata:
+      name: nginx
+      labels:
+        type: front 
+        team: ui
+    spec:
+      containers:
+      - image: nginx:1.23
+        name: nginx-front-end 

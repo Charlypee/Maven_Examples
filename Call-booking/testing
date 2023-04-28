@@ -1,0 +1,71 @@
+version: '3.9'
+
+# Define the services for the application
+services:
+  # The call-booking-api service
+  call-booking-api:
+    # Build the image from the Dockerfile in the call-booking-api directory
+    build:
+      context: ./call-booking-api
+      dockerfile: Dockerfile
+    # Set the container name for easy reference
+    container_name: call-booking-api
+    # Expose port 8000 for the API service
+    ports:
+      - "8000:8000"
+    # Set environment variables required by the API service
+    environment:
+      - DJANGO_SETTINGS_MODULE=booking.settings.local
+      - POSTGRES_DB=booking_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+    # Wait for the db service to be ready before starting the API service
+    depends_on:
+      - db
+    # Set a restart policy to always restart the container if it fails or stops
+    restart: always
+
+  # The db service
+  db:
+    # Use the official Postgres image
+    image: postgres:13
+    # Set the container name for easy reference
+    container_name: call-booking-db
+    # Expose port 5432 for the database
+    ports:
+      - "5432:5432"
+    # Set environment variables required by the database
+    environment:
+      - POSTGRES_DB=booking_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    # Use a named volume to persist the database data
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    # Set a restart policy to always restart the container if it fails or stops
+    restart: always
+
+  # The call-booking-frontend service
+  call-booking-frontend:
+    # Build the image from the Dockerfile in the call-booking-frontend directory
+    build:
+      context: ./call-booking-frontend
+      dockerfile: Dockerfile
+    # Set the container name for easy reference
+    container_name: call-booking-frontend
+    # Expose port 3000 for the frontend service
+    ports:
+      - "3000:3000"
+    # Set environment variables required by the frontend service
+    environment:
+      - REACT_APP_API_URL=http://call-booking-api:8000
+    # Wait for the call-booking-api service to be ready before starting the frontend service
+    depends_on:
+      - call-booking-api
+    # Set a restart policy to always restart the container if it fails or stops
+    restart: always
+
+# Define the named volume used by the db service
+volumes:
+  db_data:
